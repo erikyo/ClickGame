@@ -1,6 +1,6 @@
 # ClickGame
 
-![Game Screenshot](screenshot.png)
+![game](https://github.com/erikyo/ClickGame/assets/8550908/85718d97-f167-4c73-aac2-a6dc5dfa25e3)
 
 ## Overview
 
