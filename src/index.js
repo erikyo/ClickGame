@@ -1,4 +1,21 @@
+const root = document.documentElement
+
+/**
+ * The ClickGame class.
+ * A game where the player clicks on the screen to earn points.
+ */
 class ClickGame {
+  /**
+   * Constructs a new instance of the class.
+   *
+   * @param {string} containerClass - The class name of the container element.
+   * @param {string} canvasId - The id of the canvas element.
+   * @param {string} messageId - The id of the message element.
+   * @param {string} scoreboardId - The id of the scoreboard element.
+   * @param {string} difficultySliderId - The id of the difficulty slider element.
+   * @param {string} scoreSliderId - The id of the score slider element.
+   * @param {string} resetButtonId - The id of the reset button element.
+   */
   constructor (containerClass, canvasId, messageId, scoreboardId, difficultySliderId, scoreSliderId, resetButtonId) {
     this.container = document.querySelector('.' + containerClass)
     this.canvas = document.getElementById(canvasId)
@@ -21,6 +38,9 @@ class ClickGame {
     this.pointsPerClick = 50
     this.endTime = 0
 
+    this.acceleration = 0.2
+    this.floorPos = window.innerHeight
+
     this.init()
   }
 
@@ -35,19 +55,15 @@ class ClickGame {
   }
 
   setDifficulty () {
-    this.score = 0
-    this.click = 0
-    this.startTime = new Date().getTime()
-    this.difficulty = this.difficultyRange.value
+    this.difficulty = Number(this.difficultyRange.value)
     clearInterval(this.interval)
     this.interval = setInterval(this.game.bind(this), this.difficulty)
+    this.reset()
   }
 
   setPointsPerClick () {
-    this.score = 0
-    this.click = 0
-    this.startTime = new Date().getTime()
-    this.pointsPerClick = this.scoreRange.value
+    this.pointsPerClick = Number(this.scoreRange.value)
+    this.reset()
   }
 
   drawCircle () {
@@ -77,9 +93,9 @@ class ClickGame {
   reset () {
     this.score = 0
     this.click = 0
-    this.message.textContent = 'Reset'
+    this.message.textContent = ''
     this.scoreboard.textContent = ''
-    if (this.isGameActive || this.canStartNewGame()) {
+    if (!this.isGameActive || this.canStartNewGame()) {
       this.isGameActive = true
     }
   }
@@ -125,14 +141,12 @@ class ClickGame {
 
     this.container.appendChild(fallingObject)
 
-    const initialSpeed = Math.random() * 10 + 2 // Random speed between 2 and 7
+    const initialSpeed = Math.random() * 20 + 2 // Random speed between 2 and 7
     const initialAngle = Math.random() * -1 * Math.PI // Random angle in radians
 
     const velocityX = initialSpeed * Math.cos(initialAngle)
     let velocityY = initialSpeed * Math.sin(initialAngle)
 
-    const acceleration = 0.2
-    const floorPos = window.innerHeight
     let positionX = clickX - fallingObject.width / 2
     let positionY = clickY - fallingObject.height / 2
 
@@ -142,10 +156,10 @@ class ClickGame {
     const animate = () => {
       positionX += velocityX
       positionY += velocityY
-      velocityY += acceleration
-      velocityY += acceleration
+      velocityY += this.acceleration
+      velocityY += this.acceleration
 
-      if (positionY > floorPos) {
+      if (positionY > this.floorPos) {
         fallingObject.remove()
       } else {
         fallingObject.style.left = positionX + 'px'
@@ -157,6 +171,11 @@ class ClickGame {
     animate()
   }
 
+  setScore (value) {
+    const valuePercentile = Math.round(value / this.win * 100)
+    root.style.setProperty('--game-value', valuePercentile + '%')
+  }
+
   clickHandler (e) {
     if (!this.isGameActive && this.canStartNewGame()) {
       // If the game is not active, reset and start a new game
@@ -166,6 +185,7 @@ class ClickGame {
     } else {
       if (this.score !== this.win && this.isGameActive) {
         this.score += this.pointsPerClick
+        this.setScore(this.score)
         this.click++
 
         // Get canvas position
@@ -197,6 +217,11 @@ class ClickGame {
     this.scoreboard.textContent = `Time: ${timeElapsed.toFixed(2)}s - Clicks: ${this.click}`
   }
 
+  /**
+   * Updates the game state and renders the game on the canvas.
+   *
+   * @return {boolean} Returns true if the game is over, false otherwise.
+   */
   game () {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.drawCircle()
@@ -220,6 +245,7 @@ class ClickGame {
       this.startTime = new Date().getTime()
     } else {
       this.score -= 1
+      this.setScore(this.score)
     }
   }
 }
