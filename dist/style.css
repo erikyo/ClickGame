@@ -1,0 +1,88 @@
+:root {
+    --font: "Comic Sans MS", cursive, sans-serif;
+    --color-primary: #0095DD;
+    --color-secondary: #869293;
+    --color-text: #191919;
+    --color-background: #fff;
+    --image-size: 30px;
+}
+
+body {
+    font-size: 16px;
+    background: var(--color-text);
+    color: var(--color-background);
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+canvas {
+    max-width: 100%;
+    margin: 50px auto;
+    transition: 220ms ease;
+}
+
+canvas:active {
+    transform: scale(95%);
+}
+
+#message {
+    font-size: 2rem;
+}
+
+#scoreboard {
+    height: 1rem;
+    color: var(--color-background);
+}
+
+p {
+    color: var(--color-primary);
+    font-size: 1rem;
+    text-align: center;
+    font-family: var(--font);
+    margin: 0 0 1rem;
+    user-select: none;
+}
+
+button {
+    font-family: var(--font);
+    font-size: 1rem;
+    background: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 350ms;
+    user-select: none;
+}
+
+button:hover {
+    background: var(--color-primary);
+    color: var(--color-background);
+}
+
+.animated-el {
+    display: block;
+    position: absolute;
+    pointer-events: none;
+    opacity: 1;
+    color: var(--color-background);
+}
+
+.click-animation {
+    font-size: 2rem;
+}
+
+.gravity-animation img {
+    width: var(--image-size);
+    height: var(--image-size);
+    object-fit: cover;
+}
